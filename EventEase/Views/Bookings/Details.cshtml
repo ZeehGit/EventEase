@@ -1,0 +1,30 @@
+﻿@model EventEase.Models.Booking
+
+@{
+    ViewData["Title"] = "Booking Details";
+}
+
+<h2>Booking Details</h2>
+<hr />
+
+<dl class="row">
+    <dt class="col-sm-4">Booking Reference</dt>
+    <dd class="col-sm-8"><code>@Model.UniqueBookingRef</code></dd>
+    <dt class="col-sm-4">Venue</dt>
+    <dd class="col-sm-8">@Model.Venue?.Name</dd>
+    <dt class="col-sm-4">Event</dt>
+    <dd class="col-sm-8">@Model.Event?.Name</dd>
+    <dt class="col-sm-4">Booking Date</dt>
+    <dd class="col-sm-8">@Model.BookingDate.ToString("dd MMM yyyy HH:mm")</dd>
+    <dt class="col-sm-4">Status</dt>
+    <dd class="col-sm-8">
+        <span class="badge @(Model.Status == "Confirmed" ? "bg-success" : Model.Status == "Cancelled" ? "bg-danger" : "bg-warning text-dark")">
+            @Model.Status
+        </span>
+    </dd>
+    <dt class="col-sm-4">Created By</dt>
+    <dd class="col-sm-8">@Model.CreatedBy</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.BookingID" class="btn btn-warning">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

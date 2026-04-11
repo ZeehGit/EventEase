@@ -1,0 +1,57 @@
+﻿@model EventEase.Models.Booking
+
+@{
+    ViewData["Title"] = "New Booking";
+}
+
+<h2>New Booking</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="VenueID" class="form-label"></label>
+                <select asp-for="VenueID" class="form-select" asp-items="ViewBag.VenueID">
+                    <option value="">-- Select Venue --</option>
+                </select>
+                <span asp-validation-for="VenueID" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="EventID" class="form-label"></label>
+                <select asp-for="EventID" class="form-select" asp-items="ViewBag.EventID">
+                    <option value="">-- Select Event --</option>
+                </select>
+                <span asp-validation-for="EventID" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="BookingDate" class="form-label"></label>
+                <input asp-for="BookingDate" class="form-control" type="datetime-local" />
+                <span asp-validation-for="BookingDate" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Status" class="form-label"></label>
+                <select asp-for="Status" class="form-select">
+                    <option value="Pending">Pending</option>
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label asp-for="CreatedBy" class="form-label"></label>
+                <input asp-for="CreatedBy" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create Booking</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

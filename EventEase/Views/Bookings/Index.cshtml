@@ -1,0 +1,46 @@
+﻿@model IEnumerable<EventEase.Models.Booking>
+
+@{
+    ViewData["Title"] = "Bookings";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Bookings</h2>
+    <a asp-action="Create" class="btn btn-primary">+ New Booking</a>
+</div>
+
+<table class="table table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Reference</th>
+            <th>Venue</th>
+            <th>Event</th>
+            <th>Booking Date</th>
+            <th>Status</th>
+            <th>Created By</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var booking in Model)
+        {
+            <tr>
+                <td><code>@booking.UniqueBookingRef</code></td>
+                <td>@booking.Venue?.Name</td>
+                <td>@booking.Event?.Name</td>
+                <td>@booking.BookingDate.ToString("dd MMM yyyy")</td>
+                <td>
+                    <span class="badge @(booking.Status == "Confirmed" ? "bg-success" : booking.Status == "Cancelled" ? "bg-danger" : "bg-warning text-dark")">
+                        @booking.Status
+                    </span>
+                </td>
+                <td>@booking.CreatedBy</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@booking.BookingID" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="Edit" asp-route-id="@booking.BookingID" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@booking.BookingID" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
