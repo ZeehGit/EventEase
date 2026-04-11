@@ -19,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Events\" />
     <Folder Include="Views\Bookings\" />
   </ItemGroup>
 
