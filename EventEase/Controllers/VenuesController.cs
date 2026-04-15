@@ -130,3 +130,10 @@ namespace EventEase.Controllers
         }
     }
 }
+
+/*
+* Author: Alex Chzhen
+* Title: Created, CreatedAtAction, CreatedAtRoute Methods In ASP.NET Core Explained With Examples
+* Available at: https://ochzhen.com/blog/created-createdataction-createdatroute-methods-explained-aspnet-core#:~:text=version=1.0%20%7D%20%7D-,CreatedAtAction%20(string%20actionName%2C%20object%20value),./api/Values%20%7D%20%7D
+* Accessed date: 11 April 2026
+*/

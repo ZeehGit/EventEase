@@ -6,7 +6,6 @@ namespace EventEase.Models
     {
         public int BookingID { get; set; }
 
-        [Required]
         [Display(Name = "Booking Reference")]
         public string? UniqueBookingRef { get; set; }
 
