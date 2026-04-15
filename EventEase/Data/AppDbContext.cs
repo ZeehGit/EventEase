@@ -36,3 +36,10 @@ namespace EventEase.Data
         }
     }
 }
+
+/*
+* Author: Microsoft
+* Title: DbContext Lifetime, Configuration, and Initialization
+* Available at: https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/
+* Accessed date: 11 April 2026
+*/
