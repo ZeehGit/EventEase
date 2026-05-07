@@ -9,7 +9,7 @@
 
 <div class="row">
     <div class="col-md-6">
-        <form asp-action="Create">
+            <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
             <div class="mb-3">
@@ -17,6 +17,7 @@
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
+
             <div class="mb-3">
                 <label asp-for="Location" class="form-label"></label>
                 <input asp-for="Location" class="form-control" />
@@ -28,9 +29,8 @@
                 <span asp-validation-for="Capacity" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="ImageURL" class="form-label"></label>
-                <input asp-for="ImageURL" class="form-control" placeholder="https://example.com/image.jpg" />
-                <span asp-validation-for="ImageURL" class="text-danger"></span>
+                <label class="form-label">Venue Image</label>
+                <input type="file" name="imageFile" class="form-control" accept="image/*" />
             </div>
             <div class="mb-3">
                 <label asp-for="Description" class="form-label"></label>

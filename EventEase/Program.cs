@@ -6,6 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add MVC
 builder.Services.AddControllersWithViews();
 
+//Add Services
+builder.Services.AddSingleton<EventEase.Services.BlobStorageService>();
 // Register DbContext with SQL LocalDB
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

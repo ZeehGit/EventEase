@@ -1,5 +1,6 @@
 ﻿using EventEase.Data;
 using EventEase.Models;
+using EventEase.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,44 +9,43 @@ namespace EventEase.Controllers
     public class VenuesController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly BlobStorageService _blobService;
 
-        public VenuesController(AppDbContext context)
+        public VenuesController(AppDbContext context, BlobStorageService blobService)
         {
             _context = context;
+            _blobService = blobService;
         }
 
-        // GET: Venues
         public async Task<IActionResult> Index()
         {
             return View(await _context.Venues.ToListAsync());
         }
 
-        // GET: Venues/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
-
-            var venue = await _context.Venues
-                .FirstOrDefaultAsync(v => v.VenueID == id);
-
+            var venue = await _context.Venues.FirstOrDefaultAsync(v => v.VenueID == id);
             if (venue == null) return NotFound();
-
             return View(venue);
         }
 
-        // GET: Venues/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Venues/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("VenueID,Name,Location,Capacity,ImageURL,Description")] Venue venue)
+        public async Task<IActionResult> Create([Bind("VenueID,Name,Location,Capacity,Description")] Venue venue, IFormFile? imageFile)
         {
             if (ModelState.IsValid)
             {
+                if (imageFile != null && imageFile.Length > 0)
+                {
+                    venue.ImageURL = await _blobService.UploadImageAsync(imageFile);
+                }
+
                 _context.Add(venue);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -53,22 +53,17 @@ namespace EventEase.Controllers
             return View(venue);
         }
 
-        // GET: Venues/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
-
             var venue = await _context.Venues.FindAsync(id);
-
             if (venue == null) return NotFound();
-
             return View(venue);
         }
 
-        // POST: Venues/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("VenueID,Name,Location,Capacity,ImageURL,Description")] Venue venue)
+        public async Task<IActionResult> Edit(int id, [Bind("VenueID,Name,Location,Capacity,Description,ImageURL")] Venue venue, IFormFile? imageFile)
         {
             if (id != venue.VenueID) return NotFound();
 
@@ -76,6 +71,15 @@ namespace EventEase.Controllers
             {
                 try
                 {
+                    if (imageFile != null && imageFile.Length > 0)
+                    {
+                        // Delete old image if exists
+                        if (!string.IsNullOrEmpty(venue.ImageURL))
+                            await _blobService.DeleteImageAsync(venue.ImageURL);
+
+                        venue.ImageURL = await _blobService.UploadImageAsync(imageFile);
+                    }
+
                     _context.Update(venue);
                     await _context.SaveChangesAsync();
                 }
@@ -89,25 +93,18 @@ namespace EventEase.Controllers
             return View(venue);
         }
 
-        // GET: Venues/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
-
-            var venue = await _context.Venues
-                .FirstOrDefaultAsync(v => v.VenueID == id);
-
+            var venue = await _context.Venues.FirstOrDefaultAsync(v => v.VenueID == id);
             if (venue == null) return NotFound();
-
             return View(venue);
         }
 
-        // POST: Venues/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            // Block deletion if venue has bookings
             bool hasBookings = await _context.Bookings.AnyAsync(b => b.VenueID == id);
             if (hasBookings)
             {
@@ -118,6 +115,9 @@ namespace EventEase.Controllers
             var venue = await _context.Venues.FindAsync(id);
             if (venue != null)
             {
+                if (!string.IsNullOrEmpty(venue.ImageURL))
+                    await _blobService.DeleteImageAsync(venue.ImageURL);
+
                 _context.Venues.Remove(venue);
                 await _context.SaveChangesAsync();
             }
@@ -130,10 +130,3 @@ namespace EventEase.Controllers
         }
     }
 }
-
-/*
-* Author: Alex Chzhen
-* Title: Created, CreatedAtAction, CreatedAtRoute Methods In ASP.NET Core Explained With Examples
-* Available at: https://ochzhen.com/blog/created-createdataction-createdatroute-methods-explained-aspnet-core#:~:text=version=1.0%20%7D%20%7D-,CreatedAtAction%20(string%20actionName%2C%20object%20value),./api/Values%20%7D%20%7D
-* Accessed date: 11 April 2026
-*/
