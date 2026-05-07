@@ -15,7 +15,6 @@ namespace EventEase.Controllers
             _context = context;
         }
 
-        // GET: Bookings
         public async Task<IActionResult> Index()
         {
             var bookings = _context.Bookings
@@ -24,7 +23,6 @@ namespace EventEase.Controllers
             return View(await bookings.ToListAsync());
         }
 
-        // GET: Bookings/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -39,7 +37,6 @@ namespace EventEase.Controllers
             return View(booking);
         }
 
-        // GET: Bookings/Create
         public IActionResult Create()
         {
             ViewData["VenueID"] = new SelectList(_context.Venues, "VenueID", "Name");
@@ -47,31 +44,29 @@ namespace EventEase.Controllers
             return View();
         }
 
-        // POST: Bookings/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("BookingID,VenueID,EventID,BookingDate,Status,CreatedBy")] Booking booking)
         {
             if (ModelState.IsValid)
             {
-                // Check for double booking — same venue on same date
                 bool conflict = await _context.Bookings.AnyAsync(b =>
                     b.VenueID == booking.VenueID &&
                     b.BookingDate.Date == booking.BookingDate.Date);
 
                 if (conflict)
                 {
-                    ModelState.AddModelError("", "This venue is already booked on the selected date.");
+                    ViewData["ErrorMessage"] = "This venue is already booked on the selected date. Please choose a different date or venue.";
                     ViewData["VenueID"] = new SelectList(_context.Venues, "VenueID", "Name", booking.VenueID);
                     ViewData["EventID"] = new SelectList(_context.Events, "EventID", "Name", booking.EventID);
                     return View(booking);
                 }
 
-                // Generate unique booking reference
                 booking.UniqueBookingRef = "BK-" + DateTime.Now.ToString("yyyyMMdd") + "-" + Guid.NewGuid().ToString("N")[..6].ToUpper();
 
                 _context.Add(booking);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Booking created successfully.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -80,13 +75,11 @@ namespace EventEase.Controllers
             return View(booking);
         }
 
-        // GET: Bookings/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
 
             var booking = await _context.Bookings.FindAsync(id);
-
             if (booking == null) return NotFound();
 
             ViewData["VenueID"] = new SelectList(_context.Venues, "VenueID", "Name", booking.VenueID);
@@ -94,7 +87,6 @@ namespace EventEase.Controllers
             return View(booking);
         }
 
-        // POST: Bookings/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("BookingID,UniqueBookingRef,VenueID,EventID,BookingDate,Status,CreatedBy")] Booking booking)
@@ -103,7 +95,6 @@ namespace EventEase.Controllers
 
             if (ModelState.IsValid)
             {
-                // Check for double booking excluding current record
                 bool conflict = await _context.Bookings.AnyAsync(b =>
                     b.VenueID == booking.VenueID &&
                     b.BookingDate.Date == booking.BookingDate.Date &&
@@ -111,7 +102,7 @@ namespace EventEase.Controllers
 
                 if (conflict)
                 {
-                    ModelState.AddModelError("", "This venue is already booked on the selected date.");
+                    ViewData["ErrorMessage"] = "This venue is already booked on the selected date. Please choose a different date or venue.";
                     ViewData["VenueID"] = new SelectList(_context.Venues, "VenueID", "Name", booking.VenueID);
                     ViewData["EventID"] = new SelectList(_context.Events, "EventID", "Name", booking.EventID);
                     return View(booking);
@@ -121,6 +112,7 @@ namespace EventEase.Controllers
                 {
                     _context.Update(booking);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Booking updated successfully.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -135,7 +127,6 @@ namespace EventEase.Controllers
             return View(booking);
         }
 
-        // GET: Bookings/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -150,7 +141,6 @@ namespace EventEase.Controllers
             return View(booking);
         }
 
-        // POST: Bookings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -160,6 +150,7 @@ namespace EventEase.Controllers
             {
                 _context.Bookings.Remove(booking);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Booking deleted successfully.";
             }
             return RedirectToAction(nameof(Index));
         }

@@ -48,6 +48,7 @@ namespace EventEase.Controllers
 
                 _context.Add(venue);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Venue created successfully.";
                 return RedirectToAction(nameof(Index));
             }
             return View(venue);
@@ -73,7 +74,6 @@ namespace EventEase.Controllers
                 {
                     if (imageFile != null && imageFile.Length > 0)
                     {
-                        // Delete old image if exists
                         if (!string.IsNullOrEmpty(venue.ImageURL))
                             await _blobService.DeleteImageAsync(venue.ImageURL);
 
@@ -82,6 +82,7 @@ namespace EventEase.Controllers
 
                     _context.Update(venue);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Venue updated successfully.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -120,6 +121,7 @@ namespace EventEase.Controllers
 
                 _context.Venues.Remove(venue);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Venue deleted successfully.";
             }
             return RedirectToAction(nameof(Index));
         }

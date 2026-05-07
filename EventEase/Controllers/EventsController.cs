@@ -48,6 +48,7 @@ namespace EventEase.Controllers
 
                 _context.Add(ev);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Event created successfully.";
                 return RedirectToAction(nameof(Index));
             }
             return View(ev);
@@ -81,6 +82,7 @@ namespace EventEase.Controllers
 
                     _context.Update(ev);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Event updated successfully.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -119,6 +121,7 @@ namespace EventEase.Controllers
 
                 _context.Events.Remove(ev);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Event deleted successfully.";
             }
             return RedirectToAction(nameof(Index));
         }

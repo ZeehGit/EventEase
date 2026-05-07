@@ -10,7 +10,13 @@
 <div class="row">
     <div class="col-md-6">
         <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            @if (ViewData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @ViewData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
             <input type="hidden" asp-for="BookingID" />
             <input type="hidden" asp-for="UniqueBookingRef" />
 
